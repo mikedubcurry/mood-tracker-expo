@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { openDatabase } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 
@@ -52,7 +52,7 @@ function Items({ done: doneHeading, onPressItem }) {
     )
 }
 
-function MoodInput({ mood, onMoodChange, activites, onActivitesChange, selectedActivities, onSelectedActivitiesChange }) {
+function MoodInput({ mood, onMoodChange, activites, note, onNoteChange, selectedActivities, onSelectedActivitiesChange, onSave }) {
     const moods = [
         { value: 5, mood: 'Great', icon: ":D" },
         { value: 4, mood: 'Good', icon: ':)' },
@@ -60,17 +60,25 @@ function MoodInput({ mood, onMoodChange, activites, onActivitesChange, selectedA
         { value: 2, mood: 'Bad', icon: ":/" },
         { value: 1, mood: 'Aweful', icon: ":(" },
     ]
+    console.log(note)
     return (
         <>
             {mood ? (
-                <View style={styles.activitiesSelector}>
-                    <Text >{mood.mood}</Text>
-                    <View style={styles.activityList}>
-                        {activites.map(a => {
-                            return <TouchableOpacity style={{...styles.activityItem, }} key={a.id}>
-                                <Text style={styles.activityText}>{a.activity}</Text>
-                            </TouchableOpacity>
-                        })}
+                <View style={styles.sectionContainer}>
+                    <View style={styles.activitiesSelector}>
+                        <Text >{mood.mood}</Text>
+                        <View style={styles.activityList}>
+                            {activites.map(a => {
+                                return (
+                                    <TouchableOpacity style={{ ...styles.activityItem, backgroundColor: selectedActivities.filter(act => act.id === a.id).length ? 'blue' : '#555' }} key={a.id} onPress={() => onSelectedActivitiesChange(a.id)}>
+                                        <Text style={styles.activityText}>{a.activity}</Text>
+                                    </TouchableOpacity>
+
+                                )
+                            })}
+                        </View>
+                        <TextInput multiline style={styles.noteInput} value={note} onChangeText={onNoteChange} />
+                        <Button color="green" title="Save Entry" style={styles.saveButton} onPress={onSave}>Save</Button>
                     </View>
                 </View>
             ) : (
@@ -90,6 +98,7 @@ function MoodInput({ mood, onMoodChange, activites, onActivitesChange, selectedA
 export default function App() {
     const [mood, setMood] = useState(null)
     const [activities, setActivities] = useState([]);
+    const [note, setNote] = useState('')
     const [selectedActivities, setSelectedActivities] = useState([])
     const [forceUpdate, forceUpdateId] = useForceUpdate();
 
@@ -103,6 +112,9 @@ export default function App() {
             `)
             tx.executeSql(`
                 create table if not exists moodActivities (id integer primary key not null, moodId int, activityId int);
+            `)
+            tx.executeSql(`
+                create table if not exists moodNotes (id integer primary key not null, moodId int, note text);
             `)
             tx.executeSql(`
                 select * from activities;
@@ -123,11 +135,31 @@ export default function App() {
         // TODO: save mood and activities to DB
     }
 
+    const handleSelectedActivitiesChange = id => {
+        console.log(selectedActivities)
+        if (selectedActivities.map(a => a.id).includes(id)) {
+            setSelectedActivities(selectedActivities.filter(a => a.id !== id))
+        } else {
+            let activity = activities.filter(a => a.id === id)
+            if (activity)
+                setSelectedActivities([...selectedActivities, ...activity])
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.heading}>Mood Tracker</Text>
             <View style={styles.flexRow}>
-                <MoodInput mood={mood} onMoodChange={m => setMood(m)} activites={activities} onActivitesChange={() => { }} selectedActivities={selectedActivities} onSelectedActivitiesChange={() => {}} />
+                <MoodInput
+                    mood={mood}
+                    onMoodChange={m => setMood(m)}
+                    activites={activities}
+                    note={note}
+                    onNoteChange={setNote}
+                    selectedActivities={selectedActivities}
+                    onSelectedActivitiesChange={handleSelectedActivitiesChange}
+                    onSave={() => { }}
+                />
             </View>
             <ScrollView style={styles.listArea}>
                 <Items key={`forceupdate-todo-${forceUpdateId}`}
@@ -180,8 +212,11 @@ const styles = StyleSheet.create({
         paddingTop: 16,
     },
     sectionContainer: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         marginBottom: 16,
-        marginHorizontal: 16,
+        paddingHorizontal: 16,
     },
     sectionHeading: {
         fontSize: 18,
@@ -249,4 +284,17 @@ const styles = StyleSheet.create({
             transform: [{ rotate: '90deg' }]
         }
     },
+    saveButton: {
+        backgroundColor: 'green',
+        paddingHorizontal: 4
+    },
+    noteInput: {
+        borderRadius: 12,
+        padding: 12,
+        marginVertical: 16,
+        borderColor: '#000',
+        borderWidth: 1,
+        width: '100%',
+        minHeight: 128
+    }
 });
