@@ -83,6 +83,12 @@ export default function App() {
         setNote('')
     }
 
+    const cancel = () => {
+        setMood(null)
+        setSelectedActivities([])
+        setNote('')
+    }
+
     const handleSelectedActivitiesChange = id => {
         if (selectedActivities.map(a => a.id).includes(id)) {
             setSelectedActivities(selectedActivities.filter(a => a.id !== id))
@@ -106,6 +112,7 @@ export default function App() {
                     selectedActivities={selectedActivities}
                     onSelectedActivitiesChange={handleSelectedActivitiesChange}
                     onSave={saveEntry}
+                    onCancel={cancel}
                 />
             </View>
             <EntryList entries={entries} />

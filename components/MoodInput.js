@@ -1,7 +1,7 @@
 import { StyleSheet, View, TextInput, Text, Button, TouchableOpacity } from "react-native"
 import Constants from "expo-constants";
 
-export default function MoodInput({ mood, onMoodChange, activites, note, onNoteChange, selectedActivities, onSelectedActivitiesChange, onSave }) {
+export default function MoodInput({ mood, onMoodChange, activites, note, onNoteChange, selectedActivities, onSelectedActivitiesChange, onSave, onCancel }) {
     const moods = [
         { value: 5, mood: 'Great', icon: ":D" },
         { value: 4, mood: 'Good', icon: ':)' },
@@ -14,6 +14,9 @@ export default function MoodInput({ mood, onMoodChange, activites, note, onNoteC
         <>
             {mood ? (
                 <View style={styles.sectionContainer}>
+                    <TouchableOpacity onPress={onCancel}>
+                        <Text>Back</Text>
+                    </TouchableOpacity>
                     <View style={styles.activitiesSelector}>
                         <Text >{mood.mood}</Text>
                         <View style={styles.activityList}>
