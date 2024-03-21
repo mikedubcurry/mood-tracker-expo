@@ -4,6 +4,8 @@ import { openDatabase } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import MoodInput from "./components/MoodInput";
 import EntryList from "./components/EntryList";
+import EntryView from "./components/EntryView";
+import AppBar from "./components/AppBar";
 
 function getDatabase() {
     return openDatabase('moods-app.db', '0.0.4');
@@ -17,6 +19,7 @@ export default function App() {
     const [note, setNote] = useState('')
     const [selectedActivities, setSelectedActivities] = useState([])
     const [entries, setEntries] = useState([])
+    const [selectedEntry, setSelectedEntry] = useState(null)
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -87,6 +90,7 @@ export default function App() {
         setMood(null)
         setSelectedActivities([])
         setNote('')
+        setSelectedEntry(null)
     }
 
     const handleSelectedActivitiesChange = id => {
@@ -101,22 +105,34 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Mood Tracker</Text>
-            <View style={styles.flexRow}>
-                <MoodInput
-                    mood={mood}
-                    onMoodChange={m => setMood(m)}
-                    activites={activities}
-                    note={note}
-                    onNoteChange={setNote}
-                    selectedActivities={selectedActivities}
-                    onSelectedActivitiesChange={handleSelectedActivitiesChange}
-                    onSave={saveEntry}
-                    onCancel={cancel}
-                />
-            </View>
-            <EntryList entries={entries} />
-        </View>
+            <AppBar heading="Mood Tracker" onBack={cancel} showBackButton={selectedEntry || mood} />
+            {selectedEntry ? (
+                <>
+                    <EntryView entry={selectedEntry} onBack={cancel} />
+                </>
+            ) : (
+                <>
+
+                    <View style={styles.flexRow}>
+                        <MoodInput
+                            mood={mood}
+                            onMoodChange={m => setMood(m)}
+                            activites={activities}
+                            note={note}
+                            onNoteChange={setNote}
+                            selectedActivities={selectedActivities}
+                            onSelectedActivitiesChange={handleSelectedActivitiesChange}
+                            onSave={saveEntry}
+                            onCancel={cancel}
+                        />
+                    </View>
+                    <EntryList entries={entries} onSelectEntry={entry => setSelectedEntry(entry)} />
+
+                </>
+
+            )
+            }
+        </View >
     );
 }
 
@@ -125,11 +141,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         flex: 1,
         paddingTop: Constants.statusBarHeight,
-    },
-    heading: {
-        fontSize: 20,
-        fontWeight: "bold",
-        textAlign: "center",
     },
     flexRow: {
         flexDirection: "row",

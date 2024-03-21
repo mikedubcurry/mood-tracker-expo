@@ -1,5 +1,4 @@
 import { StyleSheet, View, TextInput, Text, Button, TouchableOpacity } from "react-native"
-import Constants from "expo-constants";
 
 export default function MoodInput({ mood, onMoodChange, activites, note, onNoteChange, selectedActivities, onSelectedActivitiesChange, onSave, onCancel }) {
     const moods = [
@@ -14,11 +13,8 @@ export default function MoodInput({ mood, onMoodChange, activites, note, onNoteC
         <>
             {mood ? (
                 <View style={styles.sectionContainer}>
-                    <TouchableOpacity onPress={onCancel}>
-                        <Text>Back</Text>
-                    </TouchableOpacity>
                     <View style={styles.activitiesSelector}>
-                        <Text >{mood.mood}</Text>
+                        <Text style={styles.sectionHeading}>What did you do today?</Text>
                         <View style={styles.activityList}>
                             {activites.map(a => {
                                 return (
@@ -34,13 +30,16 @@ export default function MoodInput({ mood, onMoodChange, activites, note, onNoteC
                     </View>
                 </View>
             ) : (
-                <View style={styles.moodSelector}>
-                    {moods.map(m => (
-                        <TouchableOpacity key={m.value} onPress={() => onMoodChange(m)} style={styles.moodItem} >
-                            <Text style={styles.moodText}>{m.mood}</Text>
-                            <Text style={styles.mood[m.value]}>{m.icon}</Text>
-                        </TouchableOpacity>
-                    ))}
+                <View style={styles.section}>
+                    <Text style={styles.sectionHeading}>How was your day?</Text>
+                    <View style={styles.moodSelector}>
+                        {moods.map(m => (
+                            <TouchableOpacity key={m.value} onPress={() => onMoodChange(m)} style={styles.moodItem} >
+                                <Text style={styles.moodText}>{m.mood}</Text>
+                                <Text style={styles.mood[m.value]}>{m.icon}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
             )}
         </>
@@ -55,14 +54,20 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingHorizontal: 16,
     },
+    section: {
+        display: 'flex',
+        flexDirection: "column",
+        gap: '24',
+        paddingVertical: 24,
+        alignItems: 'center'
+    },
     sectionHeading: {
         fontSize: 18,
-        marginBottom: 8,
+        fontWeight: 'bold',
     },
     moodSelector: {
         width: '100%',
         paddingHorizontal: 24,
-        paddingVertical: 24,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between'
@@ -84,11 +89,12 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
+        width: '100%'
     },
     activityItem: {
         backgroundColor: '#555',
         padding: 8,
-        borderRadius: 18
+        borderRadius: 18,
     },
     activityText: {
         color: '#fff',
@@ -133,5 +139,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         width: '100%',
         minHeight: 128
+    },
+    activitiesSelector: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
     }
 });

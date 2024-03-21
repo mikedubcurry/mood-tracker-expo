@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native"
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native"
 
 function useForceUpdate() {
     const [value, setValue] = useState(0);
     return [() => setValue(value + 1), value];
 }
 
-export default function EntryList({ entries }) {
+export default function EntryList({ entries, onSelectEntry }) {
     const [forceUpdate, forceUpdateId] = useForceUpdate();
 
     return (
         <ScrollView style={styles.listArea}>
             {entries.length > 0 && (
                 entries.map(entry => (
-                    <Text key={entry.id} >{entry.value}</Text>
+                    <TouchableOpacity key={entry.id} onPress={onSelectEntry}>
+                        <Text>{entry.value}</Text>
+                    </TouchableOpacity>
                 ))
             )}
         </ScrollView>
