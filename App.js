@@ -1,17 +1,12 @@
 import Constants from "expo-constants";
-import { StyleSheet, Text, View } from 'react-native';
-import { openDatabase } from 'expo-sqlite';
+import { StyleSheet, View } from 'react-native';
+import { db } from "./db-service";
 import { useEffect, useState } from 'react';
 import MoodInput from "./components/MoodInput";
 import EntryList from "./components/EntryList";
 import EntryView from "./components/EntryView";
 import AppBar from "./components/AppBar";
 
-function getDatabase() {
-    return openDatabase('moods-app.db', '0.0.4');
-}
-
-const db = getDatabase();
 
 export default function App() {
     const [mood, setMood] = useState(null)
@@ -127,11 +122,8 @@ export default function App() {
                         />
                     </View>
                     <EntryList entries={entries} onSelectEntry={entry => setSelectedEntry(entry)} />
-
                 </>
-
-            )
-            }
+            )}
         </View >
     );
 }

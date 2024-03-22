@@ -1,13 +1,7 @@
 import { StyleSheet, View, TextInput, Text, Button, TouchableOpacity } from "react-native"
+import { moods } from "../constants";
 
 export default function MoodInput({ mood, onMoodChange, activites, note, onNoteChange, selectedActivities, onSelectedActivitiesChange, onSave, onCancel }) {
-    const moods = [
-        { value: 5, mood: 'Great', icon: ":D" },
-        { value: 4, mood: 'Good', icon: ':)' },
-        { value: 3, mood: 'Okay', icon: ':|' },
-        { value: 2, mood: 'Bad', icon: ":/" },
-        { value: 1, mood: 'Aweful', icon: ":(" },
-    ]
 
     return (
         <>
