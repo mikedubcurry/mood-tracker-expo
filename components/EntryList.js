@@ -1,22 +1,29 @@
-import { useState, useEffect } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native"
 import EntryListItem from "./EntryListItem";
 
-function useForceUpdate() {
-    const [value, setValue] = useState(0);
-    return [() => setValue(value + 1), value];
-}
-
 export default function EntryList({ entries, onSelectEntry }) {
-    const [forceUpdate, forceUpdateId] = useForceUpdate();
+    const groupedByDate = entries.reduce((byDate, entry) => {
+        let { date } = entry;
+        date = date.slice(0, 10)
+        if (!byDate[date]) {
+            byDate[date] = [];
+        }
+        byDate[date].push(entry)
+        return byDate
+    }, {});
 
     return (
         <ScrollView style={styles.listArea}>
-            {entries.length > 0 && (
-                entries.map(entry => (
-                    <EntryListItem key={entry.id} entry={entry} onSelectEntry={onSelectEntry} />
-                ))
-            )}
+            {Object.keys(groupedByDate).length > 0 && Object.keys(groupedByDate).map(date => {
+                return (
+                    <>
+                        <Text>{date}</Text>
+                        {groupedByDate[date].map(entry => (
+                            <EntryListItem key={entry.id} entry={entry} onSelectEntry={onSelectEntry} />
+                        ))}
+                    </>
+                )
+            })}
         </ScrollView>
     )
 }

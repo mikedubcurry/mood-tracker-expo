@@ -30,7 +30,7 @@ export default function EntryListItem({ entry, onSelectEntry }) {
             </View>
             <View style={styles.activityList}>
                 {activities && activities.map((act) => (
-                    <Text key={act.id}>{act.activity}</Text>
+                    <Text style={styles.activity} key={act.id}>{act.activity}</Text>
                 ))}
             </View>
             <View style={styles.note}>
@@ -45,6 +45,7 @@ export default function EntryListItem({ entry, onSelectEntry }) {
 const styles = StyleSheet.create({
     entry: {
         padding: 8,
+        paddingLeft: 0,
         display: 'flex',
         flexDirection: 'row',
         borderColor: '#aaa',
@@ -60,13 +61,17 @@ const styles = StyleSheet.create({
     },
     activityList: {
         display: 'flex',
+        gap: 4,
         justifyContent: 'center',
         borderLeftWidth: 1,
         borderColor: '#aaa',
         paddingHorizontal: 8
     },
+    activity: {
+        textAlign: 'center',
+    },
     moodText: {
-
+        fontWeight: 'bold'
     },
     note: {
         borderLeftWidth: 1,
