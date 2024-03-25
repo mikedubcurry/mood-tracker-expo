@@ -42,6 +42,9 @@ export default function App() {
             tx.executeSql('select * from activities;', null, (_, { rows }) => {
                 setActivities(rows._array)
             })
+//tx.executeSql('delete from moods;')
+//tx.executeSql('delete from moodActivities;')
+//tx.executeSql('delete from moodNotes;')
 
         })
     }, [])
@@ -98,6 +101,11 @@ export default function App() {
         }
     }
 
+//    useEffect(() => {
+//        console.log(selectedActivities)
+//
+//    }, [selectedActivities])
+//
     return (
         <View style={styles.container}>
             <AppBar heading="Mood Tracker" onBack={cancel} showBackButton={selectedEntry || mood} />

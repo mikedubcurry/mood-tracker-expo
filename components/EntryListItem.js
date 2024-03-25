@@ -24,7 +24,7 @@ export default function EntryListItem({ entry, onSelectEntry }) {
     }, [])
 
     return (
-        <TouchableOpacity key={entry.id} onPress={onSelectEntry} style={styles.entry}>
+        <TouchableOpacity key={entry.id} onPress={() => onSelectEntry(entry)} style={styles.entry}>
             <View style={styles.entryIcon}>
                 <Text style={styles.mood[entry.value]}>{icon}</Text>
                 <Text style={styles.moodText}>{mood}</Text>
