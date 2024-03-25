@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native"
+import { ScrollView, StyleSheet, Text } from "react-native"
 import EntryListItem from "./EntryListItem";
 
 export default function EntryList({ entries, onSelectEntry }) {
