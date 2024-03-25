@@ -44,6 +44,7 @@ export default function App() {
             })
 //tx.executeSql('delete from moods;')
 //tx.executeSql('delete from moodActivities;')
+//tx.executeSql('delete from activities;')
 //tx.executeSql('delete from moodNotes;')
 
         })

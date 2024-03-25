@@ -25,6 +25,6 @@ const styles = StyleSheet.create({
     listArea: {
         backgroundColor: "#f0f0f0",
         flex: 1,
-        paddingTop: 16,
+        padding: 16,
     },
 })

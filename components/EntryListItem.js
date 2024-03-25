@@ -2,26 +2,25 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { moods } from '../constants'
 import { useEffect, useState } from 'react'
 import { db } from '../db-service'
+import { getMoodActivities, getMoodNote } from '../moods'
 
 export default function EntryListItem({ entry, onSelectEntry }) {
     const [activities, setActivities] = useState(null)
-    const [note, setNote] = useState('')
+    const [note, setNote] = useState(null)
     const { icon, mood } = moods.find(m => m.value === entry.value)
 
     useEffect(() => {
-        db.transaction(tx => {
-            tx.executeSql(`select * from moodActivities where moodId = ?;`, [entry.id,], (t, { rows }) => {
-                const moodActivities = rows._array;
-                const whereClause = moodActivities.map(() => `where id = ?`).join(' or ');
-                const params = moodActivities.map(ma => ma.activityId)
-                if (moodActivities)
-                    t.executeSql(`select * from activities ${whereClause};`, params, (_, { rows }) => {
-                        const acts = rows._array
-                        setActivities(acts)
-                    })
-            })
-        })
+        getMoodActivities(entry).then(setActivities)
+        getMoodNote(entry).then(setNote)
     }, [])
+
+    const truncateNote = (note) => {
+        if (!note) return null
+        if (note.note.length > 25) {
+            return note.note.slice(0, 25) + '...'
+        }
+        return note.note
+    }
 
     return (
         <TouchableOpacity key={entry.id} onPress={() => onSelectEntry(entry)} style={styles.entry}>
@@ -34,8 +33,11 @@ export default function EntryListItem({ entry, onSelectEntry }) {
                     <Text key={act.id}>{act.activity}</Text>
                 ))}
             </View>
-            <Text>
-            </Text>
+            <View style={styles.note}>
+                <Text>
+                    {truncateNote(note)}
+                </Text>
+            </View>
         </TouchableOpacity>
     )
 }
@@ -44,17 +46,35 @@ const styles = StyleSheet.create({
     entry: {
         padding: 8,
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderColor: '#aaa',
+        borderWidth: 1,
+        borderRadius: 8,
+        marginBottom: 8
     },
     entryIcon: {
         display: 'flex',
         alignItems: 'center',
+        padding: 8,
+        gap: 8,
     },
     activityList: {
-
+        display: 'flex',
+        justifyContent: 'center',
+        borderLeftWidth: 1,
+        borderColor: '#aaa',
+        paddingHorizontal: 8
     },
     moodText: {
 
+    },
+    note: {
+        borderLeftWidth: 1,
+        borderColor: '#aaa',
+        paddingHorizontal: 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     mood: {
         1: {
